@@ -65,6 +65,8 @@ running C.
 
 And in some systems (Alpine, Arch-Linux) there's just no way to get the library.
 
+And even if you got it -- it might be called C<libzookeeper_mt> instead!
+
 This module tries very hard to get a working C<libzookeeper>:  It checks pkg-config,
 it checks by compiling code, and if there's nothing in the system that we can use,
 it builds version 3.5.6 from source.
@@ -78,7 +80,7 @@ can be built from source without needing Java; see L<https://issues.apache.org/j
 for details.
 
 Second, we patch a bug fixed upstream in the 3.6.x releases that lead
-to segfault on connection errors.
+to segfaults on connection errors; see L<https://issues.apache.org/jira/browse/ZOOKEEPER-3954>
 
 Third, we patch its C<CMakeLists.txt> with some missing make targets;
 see L<https://issues.apache.org/jira/browse/ZOOKEEPER-4012>.
@@ -90,7 +92,8 @@ Fifth, we patch its build process to generate a C<pkg-config> meta
 file; see L<https://issues.apache.org/jira/browse/ZOOKEEPER-4013>
 
 Hopefully as the above get addressed, there will be less and less
-cases where this module ends up building the library itself!
+cases where this module ends up building the library itself;
+or at least we'll be able to get rid of some of these patches!
 
 =head1 AUTHOR
 
