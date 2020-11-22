@@ -43,6 +43,7 @@
          "requires" : {
             "Alien::Build::MM" : "0.25",
             "Alien::Build::Plugin::Build::CMake" : "0.99",
+            "ExtUtils::CBuilder" : "0",
             "ExtUtils::MakeMaker" : "6.52"
          }
       },

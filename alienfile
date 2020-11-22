@@ -1,9 +1,34 @@
 use alienfile;
 
-plugin 'PkgConfig' => 'libzookeeper';
 # problem: https://issues.apache.org/jira/browse/ZOOKEEPER-4013
 # libzookeeper doesn't come with a pkg-config file, so even if there
 # is a libzookeeper.a available, it won't show up here.
+# So first probe with pkgconfig:
+plugin 'PkgConfig' => (
+  pkg_name        => 'libzookeeper',
+  minimum_version => '3.5.0', # version here is a trick -- if there's no pkg-config result,
+                              # the PkgConfig plugin will return an empty string, which will
+                              # fail this version check, and tickle the CBuilder codepath
+);
+# And then try with Probe::CBuilder:
+plugin 'Probe::CBuilder' => (
+  libs    => '-lzookeeper',
+  version => qr/version = '[0-9\.]+'/,
+  program => q{
+#include <stdio.h>
+#include <zookeeper/zookeeper_version.h>
+
+int main() {
+#ifdef ZOO_VERSION
+    /* recent versions of zk only provide the textual version: */
+    printf("version = '%s'\n", ZOO_VERSION);
+#else
+    printf("version = '%d.%d.%d'\n", ZOO_MAJOR_VERSION, ZOO_MINOR_VERSION, ZOO_PATCH_VERSION);
+#endif
+    return 0;
+}
+},
+);
 
 share {
     # versions newer than 3.5.6 don't include the pre-generated files needed to
@@ -49,6 +74,14 @@ share {
                 'install',
         ],
     ];
+
 };
 
+meta->after_hook(
+    'gather_system' => sub {
+        # if we are using the system libraries, we need to add -lzookeeper into libs:
+        my ($build) = @_;
+        $build->runtime_prop->{libs} ||= ' -lzookeeper ';
+    }
+);
 
