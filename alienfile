@@ -1,6 +1,9 @@
 use alienfile;
 
 plugin 'PkgConfig' => 'libzookeeper';
+# problem: https://issues.apache.org/jira/browse/ZOOKEEPER-4013
+# libzookeeper doesn't come with a pkg-config file, so even if there
+# is a libzookeeper.a available, it won't show up here.
 
 share {
     # versions newer than 3.5.6 don't include the pre-generated files needed to
@@ -17,11 +20,12 @@ share {
     # Patch CMakeLists.txt so that it has a `make install` target,
     # and so that the target also creates a pkg-config file for us.
     # See https://issues.apache.org/jira/browse/ZOOKEEPER-4012
-    # and https://issues.apache.org/jira/browse/ZOOKEEPER-4013
     # for details
     patch [
         '%{patch} -p1 < %{.install.patch}/0001-add-pkg-config-template.patch',
         '%{patch} -p1 < %{.install.patch}/0002-add-make-install-target.patch',
+        '%{patch} -p1 < %{.install.patch}/0003-statically-link-libzookeeper-against-the-hashmap-impl-it-needs.patch',
+        '%{patch} -p1 < %{.install.patch}/0004-zookeeper.c-use-after-free-patched-upstream.patch',
     ];
 
     plugin 'Build::CMake' => ();
