@@ -44,7 +44,7 @@ plugin 'Probe::CBuilder' => (
 share {
     # this is https://github.com/Hugmeir/zookeeper/tree/all-patches-for-p5-alien-libzookeeper
     plugin Download => (
-        url     => 'https://github.com/hugmeir/zookeeper/archive/8d3a8b0cb54d85c03b99402ad10212bc74236838.tar.gz',
+        url     => 'https://github.com/hugmeir/zookeeper/archive/a9f96399c1b464bd2eb2a82644d17da99b05834c.tar.gz',
     );
 
     plugin Extract => 'tar.gz';
